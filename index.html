@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Rutas Transporte</title>
+
+    <!-- LEAFLET -->
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+    href="style.css">
+
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <div class="menu-btn">
+                ☰
+            </div>
+
+            <div class="logo"></div>
+
+        </div>
+
+        <!-- BUSCADOR -->
+
+        <div class="search-box">
+
+            <div class="input-group">
+
+                <div class="icon">📍</div>
+
+                <input
+                type="text"
+                value="Mi ubicación actual"
+                readonly>
+
+            </div>
+
+            <div class="line"></div>
+
+            <div class="input-group">
+
+                <div class="icon">🎯</div>
+
+                <input
+                type="text"
+                value="Universidad Católica Boliviana"
+                readonly>
+
+            </div>
+
+            <button id="buscarRuta">
+                Buscar rutas
+            </button>
+
+        </div>
+
+        <!-- MAPA -->
+
+        <div id="map"></div>
+
+        <!-- PANEL INFERIOR -->
+
+        <div class="routes-panel hidden"
+        id="routesPanel">
+
+            <!-- TABS -->
+
+            <div class="tabs">
+
+                <button
+                class="tab-btn active"
+                onclick="mostrarRuta(1, this)">
+
+                    Opción 1
+
+                </button>
+
+                <button
+                class="tab-btn"
+                onclick="mostrarRuta(2, this)">
+
+                    Opción 2
+
+                </button>
+
+                <button
+                class="tab-btn"
+                onclick="mostrarRuta(3, this)">
+
+                    Opción 3
+
+                </button>
+
+            </div>
+
+            <!-- CONTENIDO -->
+
+            <div class="route-content">
+
+                <div
+                class="route-visual"
+                id="routeVisual">
+
+                    <!-- OPCION DEFAULT -->
+
+                    <div class="transport-card blue">
+
+                        <div class="transport-type">
+                            TRUFI
+                        </div>
+
+                        <div class="transport-line">
+                            TRANS BOLOGNIA
+                        </div>
+
+                    </div>
+
+                    <div class="route-arrow">
+                        →
+                    </div>
+
+                    <div class="transport-card yellow">
+
+                        <div class="transport-type">
+                            MINIBUS
+                        </div>
+
+                        <div class="transport-line">
+                            AMARILLO
+                        </div>
+
+                    </div>
+
+                    <div class="route-arrow">
+                        →
+                    </div>
+
+                    <div class="transport-card walk">
+
+                        <div class="transport-type">
+                            A PIE
+                        </div>
+
+                        <div class="transport-line">
+                            CAMINATA
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LEAFLET -->
+
+    <script
+    src="https://unpkg.com/leaflet/dist/leaflet.js">
+    </script>
+
+    <!-- OMNIVORE -->
+
+    <script
+    src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js">
+    </script>
+
+    <!-- JS -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
