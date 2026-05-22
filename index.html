@@ -5,17 +5,22 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
+    <meta
+    name="viewport"
     content="width=device-width, initial-scale=1.0">
 
-    <title>Rutas Transporte</title>
+    <title>RutaBO</title>
 
     <!-- LEAFLET -->
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
     <!-- CSS -->
-    <link rel="stylesheet"
+
+    <link
+    rel="stylesheet"
     href="style.css">
 
 </head>
@@ -24,59 +29,223 @@
 
     <div class="app">
 
-        <!-- HEADER -->
+        <!-- =========================
+             SPLASH SCREEN
+        ========================== -->
 
-        <div class="header">
+        <div id="splashScreen"
+        class="splash-screen">
 
-            <div class="menu-btn">
-                ☰
+            <div class="splash-content">
+
+                <div class="splash-logo">
+
+                    RutaBO
+
+                </div>
+
+                <div class="splash-subtitle">
+
+                    Navega el transporte público de La Paz
+
+                </div>
+
             </div>
-
-            <div class="logo"></div>
 
         </div>
 
-        <!-- BUSCADOR -->
+        <!-- =========================
+             HEADER
+        ========================== -->
 
-        <div class="search-box">
+        <!-- HEADER -->
 
-            <div class="input-group">
+<div class="header">
 
-                <div class="icon">📍</div>
+    <div class="header-left">
 
-                <input
-                type="text"
-                value="Mi ubicación actual"
-                readonly>
+        <div class="menu-btn">
+
+            ☰
+
+        </div>
+
+        <div class="logo">
+
+            RutaBO
+
+        </div>
+
+    </div>
+
+    <!-- BOTON COLAPSAR -->
+
+    <button
+    id="toggleSearch"
+    class="collapse-btn">
+
+        ⌃
+
+    </button>
+
+</div>
+
+        <!-- =========================
+             SEARCH BOX
+        ========================== -->
+
+        <div
+class="search-box"
+id="searchBox">
+
+            <!-- ORIGEN -->
+
+            <div class="input-container">
+
+                <label>
+
+                    ¿Dónde estás?
+
+                </label>
+
+                <button
+                id="openOrigin"
+                class="fake-input">
+
+                    Seleccionar ubicación
+
+                </button>
 
             </div>
 
-            <div class="line"></div>
+            <!-- DESTINO -->
 
-            <div class="input-group">
+            <div class="input-container">
 
-                <div class="icon">🎯</div>
+                <label>
 
-                <input
-                type="text"
-                value="Universidad Católica Boliviana"
-                readonly>
+                    ¿A dónde quieres ir?
+
+                </label>
+
+                <button
+                id="openDestination"
+                class="fake-input">
+
+                    Seleccionar destino
+
+                </button>
 
             </div>
 
-            <button id="buscarRuta">
+            <!-- BOTON -->
+
+            <button
+            id="buscarRuta"
+            disabled>
+
                 Buscar rutas
+
             </button>
 
         </div>
 
-        <!-- MAPA -->
+        <!-- =========================
+             MAPA
+        ========================== -->
 
         <div id="map"></div>
 
-        <!-- PANEL INFERIOR -->
+        <!-- =========================
+             LOADING
+        ========================== -->
 
-        <div class="routes-panel hidden"
+        <div
+        id="loadingScreen"
+        class="loading-screen hidden">
+
+            <div class="loading-card">
+
+                <div class="loader"></div>
+
+                <h2>
+
+                    Buscando rutas
+
+                </h2>
+
+                <p>
+
+                    Analizando opciones de transporte...
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             MODAL ORIGEN
+        ========================== -->
+
+        <div
+        id="originModal"
+        class="selection-modal hidden">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    Selecciona tu ubicación
+
+                </div>
+
+                <button
+                class="location-option"
+                onclick="seleccionarOrigen('Bolognia Calle 1')">
+
+                    📍 Bolognia Calle 1
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             MODAL DESTINO
+        ========================== -->
+
+        <div
+        id="destinationModal"
+        class="selection-modal hidden">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    Selecciona tu destino
+
+                </div>
+
+                <button
+                class="location-option"
+                onclick="seleccionarDestino('Universidad Católica Boliviana “San Pablo”')">
+
+                    🎯 Universidad Católica Boliviana "San Pablo"
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- =========================
+             PANEL RUTAS
+        ========================== -->
+
+        <div
+        class="routes-panel hidden"
         id="routesPanel">
 
             <!-- TABS -->
@@ -117,52 +286,6 @@
                 class="route-visual"
                 id="routeVisual">
 
-                    <!-- OPCION DEFAULT -->
-
-                    <div class="transport-card blue">
-
-                        <div class="transport-type">
-                            TRUFI
-                        </div>
-
-                        <div class="transport-line">
-                            TRANS BOLOGNIA
-                        </div>
-
-                    </div>
-
-                    <div class="route-arrow">
-                        →
-                    </div>
-
-                    <div class="transport-card yellow">
-
-                        <div class="transport-type">
-                            MINIBUS
-                        </div>
-
-                        <div class="transport-line">
-                            AMARILLO
-                        </div>
-
-                    </div>
-
-                    <div class="route-arrow">
-                        →
-                    </div>
-
-                    <div class="transport-card walk">
-
-                        <div class="transport-type">
-                            A PIE
-                        </div>
-
-                        <div class="transport-line">
-                            CAMINATA
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>
@@ -171,19 +294,25 @@
 
     </div>
 
-    <!-- LEAFLET -->
+    <!-- =========================
+         LEAFLET
+    ========================== -->
 
     <script
     src="https://unpkg.com/leaflet/dist/leaflet.js">
     </script>
 
-    <!-- OMNIVORE -->
+    <!-- =========================
+         OMNIVORE
+    ========================== -->
 
     <script
     src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js">
     </script>
 
-    <!-- JS -->
+    <!-- =========================
+         SCRIPT
+    ========================== -->
 
     <script src="script.js"></script>
 

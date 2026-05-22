@@ -1,118 +1,98 @@
-//////////////////////////////////////////////////////
-// MAPA
-//////////////////////////////////////////////////////
+// ==============================
+// SPLASH SCREEN
+// ==============================
 
-const map = L.map('map', {
-    zoomControl: false
-}).setView([-16.5205, -68.1050], 13);
+window.addEventListener("load", () => {
 
-//////////////////////////////////////////////////////
-// MAPA BASE
-//////////////////////////////////////////////////////
+    setTimeout(() => {
 
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-    attribution: '&copy; OpenStreetMap'
-}).addTo(map);
+        document
+        .getElementById("splashScreen")
+        .classList.add("hidden");
 
-//////////////////////////////////////////////////////
-// MARCADOR INICIO
-//////////////////////////////////////////////////////
-
-const inicio = L.marker(
-[-16.51714, -68.08990]
-).addTo(map);
-
-inicio.bindPopup(
-"Punto de partida"
-);
-
-//////////////////////////////////////////////////////
-// MARCADOR DESTINO
-//////////////////////////////////////////////////////
-
-const destino = L.marker(
-[-16.52269, -68.11199]
-).addTo(map);
-
-destino.bindPopup(
-"Universidad Católica Boliviana"
-);
-
-//////////////////////////////////////////////////////
-// VARIABLES
-//////////////////////////////////////////////////////
-
-let capasActivas = [];
-
-//////////////////////////////////////////////////////
-// MOSTRAR PANEL
-//////////////////////////////////////////////////////
-
-document
-.getElementById("buscarRuta")
-.addEventListener("click", () => {
-
-    document
-    .getElementById("routesPanel")
-    .classList
-    .remove("hidden");
+    }, 2000);
 
 });
 
-//////////////////////////////////////////////////////
-// LIMPIAR RUTAS
-//////////////////////////////////////////////////////
+// ==============================
+// VARIABLES
+// ==============================
 
-function limpiarRutas(){
+let origenSeleccionado = false;
+let destinoSeleccionado = false;
 
-    capasActivas.forEach(capa => {
-        map.removeLayer(capa);
-    });
+// ==============================
+// MAPA
+// ==============================
 
-    capasActivas = [];
-}
+const map = L.map('map', {
+    zoomControl: false
+}).setView([-16.5205, -68.1025], 14);
 
-//////////////////////////////////////////////////////
-// CARGAR KML
-//////////////////////////////////////////////////////
+// ==============================
+// MAPA BASE
+// ==============================
+
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+    attribution: ''
+}).addTo(map);
+
+// ==============================
+// MARCADORES
+// ==============================
+
+const inicio = [-16.51714, -68.08990];
+
+const destino = [-16.52269, -68.11199];
+
+// MARCADOR INICIO
+
+const marcadorInicio = L.marker(inicio)
+.bindPopup("Punto de inicio");
+
+// MARCADOR DESTINO
+
+const marcadorDestino = L.marker(destino)
+.bindPopup("Destino");
+
+// ==============================
+// CAPAS
+// ==============================
+
+let capasActuales = [];
+
+// ==============================
+// FUNCION KML
+// ==============================
 
 function cargarKML(
     archivo,
     color,
-    grosor = 7,
-    opacity = 1,
-    dash = null
+    peso = 6,
+    opacidad = 1
 ){
 
     const capa = omnivore.kml(
-    `rutas/${archivo}`,
-    null,
-    L.geoJson(null, {
+        `rutas/${archivo}`,
+        null,
+        L.geoJson(null, {
 
-        pointToLayer: function () {
-            return null;
-        }
+            pointToLayer: function () {
+                return null;
+            }
 
-    })
-);
+        })
+    );
 
     capa.on('ready', function(){
 
-        this.setStyle({
+        capa.setStyle({
 
             color: color,
-
-            weight: grosor,
-
-            opacity: opacity,
-
-            dashArray: dash,
-
-            lineCap: "round",
-
-            lineJoin: "round"
+            weight: peso,
+            opacity: opacidad
 
         });
 
@@ -120,21 +100,155 @@ function cargarKML(
 
     capa.addTo(map);
 
-    capasActivas.push(capa);
+    capasActuales.push(capa);
 }
 
-//////////////////////////////////////////////////////
-// ACTUALIZAR VISUAL
-//////////////////////////////////////////////////////
+// ==============================
+// LIMPIAR RUTAS
+// ==============================
 
-function actualizarVisual(opcion){
+function limpiarRutas(){
+
+    capasActuales.forEach(capa => {
+
+        map.removeLayer(capa);
+
+    });
+
+    capasActuales = [];
+}
+
+// ==============================
+// ABRIR MODAL ORIGEN
+// ==============================
+
+document
+.getElementById("openOrigin")
+.addEventListener("click", () => {
+
+    document
+    .getElementById("originModal")
+    .classList.remove("hidden");
+
+});
+
+// ==============================
+// ABRIR MODAL DESTINO
+// ==============================
+
+document
+.getElementById("openDestination")
+.addEventListener("click", () => {
+
+    document
+    .getElementById("destinationModal")
+    .classList.remove("hidden");
+
+});
+
+// ==============================
+// SELECCIONAR ORIGEN
+// ==============================
+
+function seleccionarOrigen(nombre){
+
+    document
+    .getElementById("openOrigin")
+    .innerText = nombre;
+
+    document
+    .getElementById("originModal")
+    .classList.add("hidden");
+
+    origenSeleccionado = true;
+
+    verificarBusqueda();
+}
+
+// ==============================
+// SELECCIONAR DESTINO
+// ==============================
+
+function seleccionarDestino(nombre){
+
+    document
+    .getElementById("openDestination")
+    .innerText = nombre;
+
+    document
+    .getElementById("destinationModal")
+    .classList.add("hidden");
+
+    destinoSeleccionado = true;
+
+    verificarBusqueda();
+}
+
+// ==============================
+// ACTIVAR BOTON
+// ==============================
+
+function verificarBusqueda(){
+
+    const boton =
+    document.getElementById("buscarRuta");
+
+    if(
+        origenSeleccionado &&
+        destinoSeleccionado
+    ){
+
+        boton.disabled = false;
+
+    }
+}
+
+// ==============================
+// MOSTRAR RUTAS
+// ==============================
+
+function mostrarRuta(opcion, boton){
+
+    // BOTONES
+
+    document
+    .querySelectorAll('.tab-btn')
+    .forEach(btn => {
+
+        btn.classList.remove('active');
+
+    });
+
+    boton.classList.add('active');
+
+    // LIMPIAR
+
+    limpiarRutas();
+
+    // LIMPIAR MARCADORES
+
+    if(map.hasLayer(marcadorInicio)){
+    map.removeLayer(marcadorInicio);
+}
+
+if(map.hasLayer(marcadorDestino)){
+    map.removeLayer(marcadorDestino);
+}
+
+    // AGREGAR MARCADORES
+
+    marcadorInicio.addTo(map);
+
+    marcadorDestino.addTo(map);
+
+    // VISUAL
 
     const visual =
     document.getElementById("routeVisual");
 
-    //////////////////////////////////////////////////
+    // ==========================
     // OPCION 1
-    //////////////////////////////////////////////////
+    // ==========================
 
     if(opcion === 1){
 
@@ -183,13 +297,33 @@ function actualizarVisual(opcion){
             </div>
 
         </div>
-
         `;
+
+        cargarKML(
+            "trufi.kml",
+            "#2563EB",
+            7,
+            1
+        );
+
+        cargarKML(
+            "amarillo.kml",
+            "#FBBF24",
+            7,
+            1
+        );
+
+        cargarKML(
+            "pie.kml",
+            "#4B5563",
+            5,
+            0.9
+        );
     }
 
-    //////////////////////////////////////////////////
+    // ==========================
     // OPCION 2
-    //////////////////////////////////////////////////
+    // ==========================
 
     if(opcion === 2){
 
@@ -206,13 +340,19 @@ function actualizarVisual(opcion){
             </div>
 
         </div>
-
         `;
+
+        cargarKML(
+            "344.kml",
+            "#FBBF24",
+            7,
+            1
+        );
     }
 
-    //////////////////////////////////////////////////
+    // ==========================
     // OPCION 3
-    //////////////////////////////////////////////////
+    // ==========================
 
     if(opcion === 3){
 
@@ -245,117 +385,109 @@ function actualizarVisual(opcion){
             </div>
 
         </div>
-
         `;
-    }
-}
-
-//////////////////////////////////////////////////////
-// MOSTRAR RUTAS
-//////////////////////////////////////////////////////
-
-function mostrarRuta(opcion, boton){
-
-    //////////////////////////////////////////////////
-    // BOTONES ACTIVOS
-    //////////////////////////////////////////////////
-
-    document
-    .querySelectorAll(".tab-btn")
-    .forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    if(boton){
-        boton.classList.add("active");
-    }
-
-    //////////////////////////////////////////////////
-    // ACTUALIZAR VISUAL
-    //////////////////////////////////////////////////
-
-    actualizarVisual(opcion);
-
-    //////////////////////////////////////////////////
-    // LIMPIAR MAPA
-    //////////////////////////////////////////////////
-
-    limpiarRutas();
-
-    //////////////////////////////////////////////////
-    // OPCION 1
-    //////////////////////////////////////////////////
-
-    if(opcion === 1){
-
-        // TRUFI PRINCIPAL
-
-        cargarKML(
-            "trufi.kml",
-            "#2F80ED",
-            8,
-            1
-        );
-
-        // MINIBUS AMARILLO
-
-        cargarKML(
-            "amarillo.kml",
-            "#F2C94C",
-            8,
-            0.8
-        );
-
-        // CAMINATA
-
-        cargarKML(
-            "apie.kml",
-            "#4F4F4F",
-            5,
-            1,
-            "10,10"
-        );
-    }
-
-    //////////////////////////////////////////////////
-    // OPCION 2
-    //////////////////////////////////////////////////
-
-    if(opcion === 2){
-
-        cargarKML(
-            "344.kml",
-            "#F2C94C",
-            8,
-            1
-        );
-    }
-
-    //////////////////////////////////////////////////
-    // OPCION 3
-    //////////////////////////////////////////////////
-
-    if(opcion === 3){
 
         cargarKML(
             "246.kml",
-            "#F2C94C",
-            8,
+            "#FBBF24",
+            7,
             1
         );
 
         cargarKML(
-            "apie.kml",
-            "#4F4F4F",
+            "pie.kml",
+            "#4B5563",
             5,
-            1,
-            "10,10"
+            0.9
         );
     }
 }
 
-//////////////////////////////////////////////////////
-// RUTA DEFAULT
-//////////////////////////////////////////////////////
+// ==============================
+// BUSCAR RUTA
+// ==============================
 
-mostrarRuta(1);
+document
+.getElementById("buscarRuta")
+.addEventListener("click", () => {
+
+    // MOSTRAR LOADING
+
+    document
+    .getElementById("loadingScreen")
+    .classList.remove("hidden");
+
+    // ESPERA
+
+    setTimeout(() => {
+
+        // OCULTAR LOADING
+
+        document
+        .getElementById("loadingScreen")
+        .classList.add("hidden");
+
+        // MOSTRAR PANEL
+
+        document
+        .getElementById("routesPanel")
+        .classList.remove("hidden");
+
+        // MOSTRAR RUTA 1
+
+        const primerBoton =
+        document.querySelector(".tab-btn");
+
+        mostrarRuta(1, primerBoton);
+
+    }, 2200);
+
+});
+// ==============================
+// COLAPSAR SEARCH BOX
+// ==============================
+
+const toggleSearch =
+document.getElementById("toggleSearch");
+
+const searchBox =
+document.getElementById("searchBox");
+
+let searchCollapsed = false;
+
+// EVENTO
+
+toggleSearch.addEventListener("click", () => {
+
+    // SI ESTA CERRADO
+
+    if(searchCollapsed){
+
+        // MOSTRAR
+
+        searchBox.classList.remove("collapsed");
+
+        // CAMBIAR ICONO
+
+        toggleSearch.innerHTML = "⌃";
+
+        searchCollapsed = false;
+
+    }
+
+    // SI ESTA ABIERTO
+
+    else{
+
+        // OCULTAR
+
+        searchBox.classList.add("collapsed");
+
+        // CAMBIAR ICONO
+
+        toggleSearch.innerHTML = "⌄";
+
+        searchCollapsed = true;
+    }
+
+});
